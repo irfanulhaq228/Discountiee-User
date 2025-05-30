@@ -41,15 +41,15 @@ const Home = () => {
   const [discounts, setDiscounts] = useState<any[]>([]);
   const [discountsLoader, setDiscountsLoader] = useState<boolean>(true);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const nextIndex = (currentIndex + 1) % banners.length;
-      setCurrentIndex(nextIndex);
-      flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     const nextIndex = (currentIndex + 1) % banners.length;
+  //     setCurrentIndex(nextIndex);
+  //     flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, [currentIndex, banners.length]);
+  //   return () => clearInterval(interval);
+  // }, [currentIndex, banners.length]);
 
   useEffect(() => {
     setBrandsLoader(true);
@@ -173,7 +173,8 @@ const Home = () => {
       <View style={[styles.bannerItemContainer, {
         backgroundColor: dark ? COLORS.dark3 : COLORS.bgPrimary
       }]}>
-        <FlatList
+        <Image source={images.banner} style={{ width: '100%', height: '100%', objectFit: 'contain', alignSelf: 'center', overflow: 'hidden' }} />
+        {/* <FlatList
           data={banners}
           ref={flatListRef}
           renderItem={renderBannerItem}
@@ -183,18 +184,18 @@ const Home = () => {
           showsHorizontalScrollIndicator={false}
           getItemLayout={getItemLayout}
           onScrollToIndexFailed={onScrollToIndexFailed}
-          // onEndReached={handleEndReached}
-          // onEndReachedThreshold={0.5}
+          onEndReached={handleEndReached}
+          onEndReachedThreshold={0.5}
           onMomentumScrollEnd={(event) => {
             const newIndex = Math.round(
               event.nativeEvent.contentOffset.x / SIZES.width
             );
             setCurrentIndex(newIndex);
           }}
-        />
-        <View style={styles.dotContainer}>
+        /> */}
+        {/* <View style={styles.dotContainer}>
           {banners.map((_, index) => renderDot(index))}
-        </View>
+        </View> */}
       </View>
     )
   }
@@ -251,8 +252,6 @@ const Home = () => {
       <View>
         <SubHeaderItem
           title="Recent Discounts"
-          navTitle="See All"
-          onPress={() => navigation.navigate("mostpopularproducts")}
         />
         {discountsLoader ? (
           <View style={{
@@ -459,10 +458,10 @@ const styles = StyleSheet.create({
   },
   bannerItemContainer: {
     width: "100%",
-    paddingBottom: 10,
     backgroundColor: COLORS.secondary,
     height: 170,
     borderRadius: 20,
+    overflow: 'hidden'
   },
   dotContainer: {
     flexDirection: 'row',

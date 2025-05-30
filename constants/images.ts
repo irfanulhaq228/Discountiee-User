@@ -132,11 +132,13 @@ const noProfile = require("../assets/images/no-profile.jpg");
 const dLogo = require("../assets/images/Discountiee_Logo.png");
 const dTextLogo = require("../assets/images/DTextLogo.png");
 const PngNoDataFound = require('../assets/images/no-data-found.png');
+const banner = require("../assets/images/banner.png")
 
 
 export default {
     ornament,
     logo,
+    banner,
 
     user1,
     user2,

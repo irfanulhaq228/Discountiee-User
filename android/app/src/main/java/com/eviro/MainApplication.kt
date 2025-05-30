@@ -1,4 +1,4 @@
-package com.eviro
+package com.Discountiee
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -25,7 +25,7 @@ const Welcome = () => {
         />
         <Text style={[styles.title, { color: colors.text }]}>Welcome Back!</Text>
         <Text style={[styles.subtitle, { color: dark ? COLORS.white : "black" }]}>
-          Hello there, continue with and search your favourites products easly on Eviro.
+          Hello there, continue with and search your favourites products easly on Discountiee.
         </Text>
         <View style={{ marginVertical: 32 }}>
           <SocialButtonV2 title="Continue with Apple" icon={icons.appleLogo} onPress={() => navigate("signup")}

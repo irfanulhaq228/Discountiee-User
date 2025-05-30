@@ -78,7 +78,7 @@ const Categories = () => {
           <View style={{ flexDirection: 'column' }}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {categoriesLoader ? (
-                <View>
+                <View style={{ width: SIZES.width, justifyContent: 'center', alignItems: 'center' }}>
                   <ActivityIndicator size={'large'} color={COLORS.primary} style={{ alignSelf: 'center' }} />
                 </View>
               ) : (

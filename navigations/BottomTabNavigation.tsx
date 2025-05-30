@@ -104,8 +104,8 @@ const BottomTabNavigation = () => {
                                     source={focused ? icons.category : icons.categoryOutline}
                                     resizeMode="contain"
                                     style={{
-                                        width: 24,
-                                        height: 24,
+                                        width: 22,
+                                        height: 22,
                                         tintColor: focused ? dark ? COLORS.white : COLORS.primary : dark ? COLORS.gray3 : COLORS.gray3,
                                     }}
                                 />

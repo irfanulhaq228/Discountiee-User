@@ -13,7 +13,7 @@ const Onboarding1 = () => {
   // Add useEffect
   useEffect(() => {
     const timeout = setTimeout(() => {
-      navigate('onboarding2');
+      navigate('(tabs)');
     }, 2000);
 
     return () => clearTimeout(timeout);
