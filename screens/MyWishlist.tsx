@@ -59,7 +59,7 @@ const MyWishlist: React.FC<MyWishlistProps> = () => {
           {wishlistLoader ? (
             <View style={{
               backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-              marginBottom: 50,
+              marginBottom: 60,
               flexDirection: 'row',
               flexWrap: 'wrap',
               gap: 16,
@@ -71,7 +71,7 @@ const MyWishlist: React.FC<MyWishlistProps> = () => {
           ) : data?.length > 0 ? (
             <View style={{
               backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-              marginBottom: 50,
+              marginBottom: 60,
             }}>
               <FlatList
                 data={data}

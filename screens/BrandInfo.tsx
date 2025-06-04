@@ -54,11 +54,9 @@ const BrandInfo = () => {
                             <Text style={{ fontSize: 25, fontWeight: 600, color: COLORS.primary, fontFamily: "Urbanist Medium" }}>{savedBrand?.name}</Text>
                             <View style={{ flexDirection: 'row', gap: 5 }}>
                                 <FontAwesome6 name="location-dot" style={{ color: COLORS.primary, marginTop: 1 }} size={16} />
-                                <TextInput
-                                    multiline
-                                    style={{ fontFamily: "Urbanist Medium", padding: 0, lineHeight: 10, fontSize: 15, flexShrink: 1, flexGrow: 1 }}
-                                    value={`${savedBrand?.address}, ${savedBrand?.city}, ${savedBrand?.country}`}
-                                />
+                                <Text style={{ fontFamily: "Urbanist Medium", padding: 0, fontSize: 15, flexShrink: 1, flexGrow: 1 }}>
+                                    {savedBrand?.address}, {savedBrand?.city}, {savedBrand?.country}
+                                </Text>
                             </View>
                         </View>
                     </View>
@@ -68,7 +66,7 @@ const BrandInfo = () => {
                     {selectedBrandDiscountLoader ? (
                         <View style={{
                             backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                            marginBottom: 50,
+                            marginBottom: 60,
                             flexDirection: 'row',
                             flexWrap: 'wrap',
                             gap: 16,
@@ -80,7 +78,7 @@ const BrandInfo = () => {
                     ) : selectedBrandDiscount?.length > 0 ? (
                         <View style={{
                             backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                            marginBottom: 50,
+                            marginBottom: 60,
                         }}>
                             <FlatList
                                 data={selectedBrandDiscount}

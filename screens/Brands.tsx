@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import { View, StyleSheet, FlatList, Image, Text, TouchableOpacity, Modal } from 'react-native';
 
@@ -38,12 +38,14 @@ const Brands = () => {
 
     const [canFilter, setCanFilter] = useState(false);
 
-    useEffect(() => {
-        setBrandsLoader(true);
-        fn_getBrands([]);
-        fn_getCategories();
-        setFirstTime(false);
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            setBrandsLoader(true);
+            fn_getBrands([]);
+            fn_getCategories();
+            setFirstTime(false);
+        }, [])
+    );
 
     useEffect(() => {
         if (modalVisible) {
@@ -210,7 +212,7 @@ const Brands = () => {
                             {selectedBrandDiscountLoader ? (
                                 <View style={{
                                     backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                                    marginBottom: 50,
+                                    marginBottom: 60,
                                     flexDirection: 'row',
                                     flexWrap: 'wrap',
                                     gap: 16,
@@ -222,7 +224,7 @@ const Brands = () => {
                             ) : selectedBrandDiscount?.length > 0 ? (
                                 <View style={{
                                     backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                                    marginBottom: 50,
+                                    marginBottom: 60,
                                 }}>
                                     <FlatList
                                         data={selectedBrandDiscount}

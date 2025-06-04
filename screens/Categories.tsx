@@ -1,9 +1,9 @@
 import { useDispatch } from 'react-redux';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import { View, StyleSheet, Text, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 
@@ -33,9 +33,11 @@ const Categories = () => {
 
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
 
-  useEffect(() => {
-    fn_getCategories();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      fn_getCategories();
+    }, [])
+  );
 
   const fn_selectCategory = (item: any) => {
     setSelectedCategory(item);
@@ -112,7 +114,7 @@ const Categories = () => {
                 {dataLoader ? (
                   <View style={{
                     backgroundColor: COLORS.white,
-                    marginBottom: 50,
+                    marginBottom: 60,
                     flexDirection: 'row',
                     flexWrap: 'wrap',
                     gap: 16,
@@ -124,7 +126,7 @@ const Categories = () => {
                 ) : data?.length > 0 ? (
                   <View style={{
                     backgroundColor: COLORS.white,
-                    marginBottom: 50,
+                    marginBottom: 60,
                   }}>
                     <FlatList
                       data={data}

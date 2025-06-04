@@ -36,7 +36,7 @@ const AppNavigation = () => {
 
     if (isLoading) {
         return null;
-    }
+    };
 
     return (
         <NavigationContainer>

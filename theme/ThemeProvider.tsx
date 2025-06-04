@@ -11,7 +11,7 @@ interface ThemeContextType {
 const defaultThemeContext: ThemeContextType = {
     dark: false,
     colors: lightColors,
-    setScheme: () => {},
+    setScheme: () => { },
 };
 
 export const ThemeContext = createContext<ThemeContextType>(defaultThemeContext);
@@ -29,9 +29,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }, [colorScheme]);
 
     const defaultTheme: ThemeContextType = {
-        dark: isDark,
-        colors: isDark ? darkColors : lightColors,
-        setScheme: (scheme: 'light' | 'dark') => setIsDark(scheme === 'dark'),
+        // dark: isDark,
+        dark: false,
+        // colors: isDark ? darkColors : lightColors,
+        colors: lightColors,
+        // setScheme: (scheme: 'light' | 'dark') => setIsDark(scheme === 'dark'),
+        setScheme: (scheme: 'light' | 'dark') => setIsDark(false),
     };
 
     return (

@@ -6,19 +6,20 @@ import { View, Text, TouchableOpacity, Image, StyleSheet, StatusBar } from 'reac
 
 import { useTheme } from '../theme/ThemeProvider';
 import AutoSlider from '../components/AutoSlider';
-import { API_URL, fn_favouriteToggleApi, fn_getPostDetailsApi, fn_isFavourite } from '../api/api';
 import { COLORS, SIZES, icons } from '../constants';
+import RoundLoader from '../components/RoundLoader';
+import { updateSelectedBrand } from '../store/features';
+import { API_URL, fn_favouriteToggleApi, fn_getPostDetailsApi, fn_isFavourite } from '../api/api';
 
 import FontAwesome6 from 'react-native-vector-icons/FontAwesome6';
-import { updateSelectedBrand } from '../store/features';
-import RoundLoader from '../components/RoundLoader';
 
 const DiscountDetails = () => {
 
     const { dark } = useTheme();
     const dispatch = useDispatch();
-    const navigation = useNavigation<NavigationProp<any>>();
+    const [timeLeft, setTimeLeft] = useState("");
     const [isFavorite, setIsFavorite] = useState(false);
+    const navigation = useNavigation<NavigationProp<any>>();
 
     const [post, setPost] = useState<any>(null);
     const [loader, setLoader] = useState(true);
@@ -37,8 +38,64 @@ const DiscountDetails = () => {
             };
 
             checkFavourite();
+        };
+    }, [post]);
+
+    useEffect(() => {
+        if (post) {
+            const interval = setInterval(() => {
+                const timerString = fn_showTimer(post);
+                setTimeLeft(timerString);
+
+                if (timerString === "00:00:00") {
+                    clearInterval(interval);
+                }
+            }, 1000);
+
+            return () => clearInterval(interval);
         }
     }, [post]);
+
+    const fn_showTimer = (post: any) => {
+        const parseTime = (timeStr: any) => {
+            const [time, modifier] = timeStr.split(" ");
+            let [hours, minutes] = time.split(":").map(Number);
+
+            if (modifier === "PM" && hours < 12) hours += 12;
+            if (modifier === "AM" && hours === 12) hours = 0;
+
+            return { hours, minutes };
+        };
+
+        let startDate, endDate;
+
+        if (post?.immediately) {
+            startDate = new Date(post?.createdAt);
+        } else {
+            const { hours, minutes } = parseTime(post.uploadTime || "12:00 AM");
+            startDate = new Date(post.uploadDate);
+            startDate.setHours(hours, minutes, 0);
+        }
+
+        const { hours: endHours, minutes: endMinutes } = parseTime(post.endTime || "12:00 AM");
+        endDate = new Date(post.endDate) as any;
+        endDate.setHours(endHours, endMinutes, 0);
+
+        const now = new Date() as any;
+        const diff = Math.max(0, endDate - now); // prevent negative
+
+        let totalSeconds = Math.floor(diff / 1000);
+        const days = Math.floor(totalSeconds / (3600 * 24));
+        totalSeconds %= (3600 * 24);
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+
+        const hms = `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+        return days > 0 ? `${days}d ${hms}` : hms;
+    };
 
     const fn_getPostDetails = async () => {
         const response = await fn_getPostDetailsApi(selectedDiscount);
@@ -57,7 +114,6 @@ const DiscountDetails = () => {
         setIsFavorite(result);
     };
 
-    // render header
     const renderHeader = () => {
 
         return (
@@ -77,10 +133,6 @@ const DiscountDetails = () => {
     const renderContent = () => {
 
         const date = new Date(post?.createdAt);
-
-        const formattedDate = `${date.toDateString()}, ${date.getHours() % 12 || 12
-            }:${date.getMinutes().toString().padStart(2, '0')} ${date.getHours() >= 12 ? 'PM' : 'AM'
-            }`
 
         return (
             <View style={styles.contentContainer}>
@@ -136,28 +188,14 @@ const DiscountDetails = () => {
                     {post?.description}
                 </Text>
 
-                <Text style={[styles.descTitle, { color: dark ? COLORS.white : COLORS.greyscale900 }]}>
-                    Discount Start
-                </Text>
-
-                <Text style={[styles.descText, { color: dark ? COLORS.greyscale300 : COLORS.primary }]}>
-                    {post?.immediately ? (
-                        <>
-                            {formattedDate}
-                        </>
-                    ) : (
-                        <>
-                            {post?.uploadDate}, {post?.uploadTime}
-                        </>
-                    )}
-                </Text>
+                <View style={{ height: 1, backgroundColor: '#E0E0E0', marginVertical: 15 }} />
 
                 <Text style={[styles.descTitle, { color: dark ? COLORS.white : COLORS.greyscale900 }]}>
-                    Discount Expiry
+                    Time Left
                 </Text>
 
-                <Text style={[styles.descText, { color: dark ? COLORS.greyscale300 : COLORS.error }]}>
-                    {post?.endDate}, {post?.endTime}
+                <Text style={styles.timer}>
+                    {timeLeft}
                 </Text>
             </View >
         )
@@ -204,39 +242,12 @@ const styles = StyleSheet.create({
         height: 24,
         tintColor: COLORS.black
     },
-    sendIcon: {
-        width: 24,
-        height: 24,
-        tintColor: COLORS.black
-    },
-    sendIconContainer: {
-        marginLeft: 8
-    },
     iconContainer: {
         flexDirection: "row",
         alignItems: "center"
     },
     contentContainer: {
         marginHorizontal: 12
-    },
-    separateLine: {
-        width: SIZES.width - 32,
-        height: 1,
-        backgroundColor: COLORS.grayscale200
-    },
-    bottomTitle: {
-        fontSize: 24,
-        fontFamily: "Urbanist SemiBold",
-        color: COLORS.black,
-        textAlign: "center",
-        marginTop: 12
-    },
-    socialContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        marginVertical: 12,
-        width: SIZES.width - 32
     },
     contentView: {
         alignItems: "center",
@@ -248,40 +259,6 @@ const styles = StyleSheet.create({
         fontSize: 25,
         fontFamily: "Urbanist Bold",
         color: COLORS.black,
-    },
-    ratingContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: SIZES.width - 32,
-        marginVertical: 12
-    },
-    ratingView: {
-        width: 68,
-        height: 24,
-        borderRadius: 4,
-        backgroundColor: COLORS.silver,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    ratingViewTitle: {
-        fontSize: 10,
-        fontFamily: "Urbanist SemiBold",
-        color: "#35383F",
-        textAlign: "center"
-    },
-    starContainer: {
-        marginHorizontal: 16,
-        flexDirection: "row",
-        alignItems: "center"
-    },
-    starIcon: {
-        height: 20,
-        width: 20
-    },
-    reviewText: {
-        fontSize: 14,
-        fontFamily: "Urbanist Medium",
-        color: COLORS.greyScale800
     },
     descTitle: {
         fontSize: 18,
@@ -295,137 +272,12 @@ const styles = StyleSheet.create({
         color: COLORS.greyScale800,
         fontFamily: "Urbanist Regular",
     },
-    featureContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: SIZES.width - 32,
-        marginVertical: 12
-    },
-    featureView: {
-        flexDirection: "column",
-    },
-    sizeContainer: {
-        flexDirection: "row",
-        alignItems: "center"
-    },
-    sizeView: {
-        height: 40,
-        width: 40,
-        borderRadius: 999,
-        backgroundColor: "transparent",
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 2,
-        borderColor: COLORS.greyscale600,
-        marginRight: 12
-    },
-    sizeText: {
-        fontSize: 16,
+    timer: {
         fontFamily: "Urbanist Bold",
-        color: COLORS.greyscale600,
-        textAlign: "center"
-    },
-    selectedSize: {
-        backgroundColor: 'black',
-        borderColor: 'black',
-    },
-    selectedText: {
-        color: 'white',
-    },
-    colorContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
-    colorView: {
-        width: 40,
-        height: 40,
-        borderRadius: 25,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 8
-    },
-    selectedColor: {
-        marginRight: 7.8
-    },
-    qtyContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: SIZES.width - 32,
-        marginVertical: 12
-    },
-    qtyViewContainer: {
-        backgroundColor: COLORS.silver,
-        height: 48,
-        width: 134,
-        borderRadius: 24,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "center",
-        marginHorizontal: 16
-    },
-    qtyViewText: {
-        fontSize: 18,
-        fontFamily: "Urbanist Bold",
-        color: COLORS.black,
-        textAlign: "center"
-    },
-    qtyMidText: {
-        fontSize: 18,
-        fontFamily: "Urbanist Bold",
-        color: COLORS.black,
-        textAlign: "center",
-        marginHorizontal: 16
-    },
-    cartBottomContainer: {
-        position: "absolute",
-        bottom: 12,
-        left: 0,
-        right: 0,
-        width: SIZES.width,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-        height: 104,
-        backgroundColor: COLORS.white,
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderTopRightRadius: 32,
-        borderTopLeftRadius: 32,
-        borderTopColor: COLORS.white,
-        borderTopWidth: 1,
-    },
-    cartTitle: {
-        fontSize: 12,
-        fontFamily: "Urbanist Medium",
-        color: COLORS.greyscale600,
-        marginBottom: 6
-    },
-    cartSubtitle: {
-        fontSize: 24,
-        fontFamily: "Urbanist Bold",
-        color: COLORS.black,
-    },
-    cartBtn: {
-        height: 58,
-        width: 250,
-        alignItems: "center",
-        justifyContent: "center",
-        borderRadius: 32,
-        backgroundColor: COLORS.black,
-        flexDirection: "row",
-    },
-    cartBtnText: {
-        fontSize: 16,
-        fontFamily: "Urbanist Bold",
-        color: COLORS.white,
-        textAlign: "center"
-    },
-    bagIcon: {
-        height: 20,
-        width: 20,
-        tintColor: COLORS.white,
-        marginRight: 8
+        fontSize: 40,
+        textAlign: 'center',
+        marginBottom: 70,
+        color: COLORS.primary
     }
 })
 

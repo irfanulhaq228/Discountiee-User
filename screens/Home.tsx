@@ -1,14 +1,13 @@
 import { useDispatch } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
-import React, { useEffect, useRef, useState } from 'react';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { NavigationProp, useNavigation } from '@react-navigation/native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder'
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ListRenderItemInfo } from 'react-native';
+import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 
 import Brand from '../components/Brand';
-import { banners } from '../data';
 import { useTheme } from '../theme/ThemeProvider';
 import SubHeaderItem from '../components/SubHeaderItem';
 import { COLORS, icons, images, SIZES } from '../constants';
@@ -17,23 +16,13 @@ import { API_URL, fn_getBrandsApi, fn_getDiscountWithBrandApi } from '../api/api
 import DiscountWithBrand from '../components/DiscountWithBrand';
 import { DiscountCardSkeleton } from '../components/DiscountCard';
 
-interface BannerItem {
-  id: number;
-  discount: string;
-  discountName: string;
-  bottomTitle: string;
-  bottomSubtitle: string;
-}
-
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
 const Home = () => {
 
   const dispatch = useDispatch();
   const { dark, colors } = useTheme();
-  const flatListRef = useRef<FlatList>(null);
   const navigation = useNavigation<NavigationProp<any>>();
-  const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   const [brands, setBrands] = useState<any[]>([]);
   const [brandsLoader, setBrandsLoader] = useState<boolean>(true);
@@ -41,23 +30,17 @@ const Home = () => {
   const [discounts, setDiscounts] = useState<any[]>([]);
   const [discountsLoader, setDiscountsLoader] = useState<boolean>(true);
 
-  // useEffect(() => {
-  //   const interval = setInterval(() => {
-  //     const nextIndex = (currentIndex + 1) % banners.length;
-  //     setCurrentIndex(nextIndex);
-  //     flatListRef.current?.scrollToIndex({ index: nextIndex, animated: true });
-  //   }, 1000);
+  useFocusEffect(
+    useCallback(() => {
+      setBrandsLoader(true);
+      setBrands([]);
+      fn_getBrands();
 
-  //   return () => clearInterval(interval);
-  // }, [currentIndex, banners.length]);
-
-  useEffect(() => {
-    setBrandsLoader(true);
-    fn_getBrands();
-
-    setDiscountsLoader(true);
-    fn_getDiscounts();
-  }, []);
+      setDiscountsLoader(true);
+      setDiscounts([]);
+      fn_getDiscounts();
+    }, [])
+  );
 
   const fn_getBrands = async () => {
     const response = await fn_getBrandsApi([]);
@@ -80,22 +63,6 @@ const Home = () => {
       setDiscounts([]);
     }
   };
-
-  const onScrollToIndexFailed = (info: {
-    index: number;
-    highestMeasuredFrameIndex: number;
-    averageItemLength: number;
-  }) => {
-    setTimeout(() => {
-      flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
-    }, 500); // Retry after a short delay
-  };
-
-  const getItemLayout = (_: any, index: number) => ({
-    length: SIZES.width,
-    offset: SIZES.width * index,
-    index,
-  });
 
   const renderHeader = () => {
     return (
@@ -127,45 +94,6 @@ const Home = () => {
         </View>
       </View>
     )
-  }
-
-  const renderBannerItem = ({ item }: ListRenderItemInfo<BannerItem>) => (
-    <View style={[styles.bannerContainer, {
-      backgroundColor: dark ? COLORS.dark3 : COLORS.transparent
-    }]}>
-      <View style={styles.bannerTopContainer}>
-        <View>
-          <Text style={[styles.bannerDicount, {
-            color: dark ? COLORS.white : COLORS.black,
-          }]}>{item.discount} OFF</Text>
-          <Text style={[styles.bannerDiscountName, {
-            color: dark ? COLORS.white : COLORS.black
-          }]}>{item.discountName}</Text>
-        </View>
-        <Text style={[styles.bannerDiscountNum, {
-          color: dark ? COLORS.white : COLORS.black
-        }]}>{item.discount}</Text>
-      </View>
-      <View style={styles.bannerBottomContainer}>
-        <Text style={[styles.bannerBottomTitle, {
-          color: dark ? COLORS.white : COLORS.black
-        }]}>{item.bottomTitle}</Text>
-        <Text style={[styles.bannerBottomSubtitle, {
-          color: dark ? COLORS.white : COLORS.black
-        }]}>{item.bottomSubtitle}</Text>
-      </View>
-    </View>
-  );
-
-  const keyExtractor = (item: { id: number | string }) => item.id.toString();
-
-  const renderDot = (index: number) => {
-    return (
-      <View
-        style={[styles.dot, index === currentIndex ? styles.activeDot : null]}
-        key={index}
-      />
-    );
   };
 
   const renderBanner = () => {
@@ -174,31 +102,9 @@ const Home = () => {
         backgroundColor: dark ? COLORS.dark3 : COLORS.bgPrimary
       }]}>
         <Image source={images.banner} style={{ width: '100%', height: '100%', objectFit: 'contain', alignSelf: 'center', overflow: 'hidden' }} />
-        {/* <FlatList
-          data={banners}
-          ref={flatListRef}
-          renderItem={renderBannerItem}
-          keyExtractor={keyExtractor}
-          horizontal
-          pagingEnabled
-          showsHorizontalScrollIndicator={false}
-          getItemLayout={getItemLayout}
-          onScrollToIndexFailed={onScrollToIndexFailed}
-          onEndReached={handleEndReached}
-          onEndReachedThreshold={0.5}
-          onMomentumScrollEnd={(event) => {
-            const newIndex = Math.round(
-              event.nativeEvent.contentOffset.x / SIZES.width
-            );
-            setCurrentIndex(newIndex);
-          }}
-        /> */}
-        {/* <View style={styles.dotContainer}>
-          {banners.map((_, index) => renderDot(index))}
-        </View> */}
       </View>
     )
-  }
+  };
 
   const renderBrands = () => {
     return (
@@ -256,7 +162,7 @@ const Home = () => {
         {discountsLoader ? (
           <View style={{
             backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-            marginBottom: 50,
+            marginBottom: 60,
             flexDirection: 'row',
             flexWrap: 'wrap',
             gap: 16,
@@ -268,7 +174,7 @@ const Home = () => {
         ) : discounts?.length > 0 ? (
           <View style={{
             backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-            marginBottom: 50,
+            marginBottom: 60,
           }}>
             <FlatList
               data={discounts}
