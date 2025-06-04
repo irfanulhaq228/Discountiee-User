@@ -32,7 +32,7 @@ const AppNavigation = () => {
         }
 
         checkIfFirstLaunch()
-    }, [])
+    }, []);
 
     if (isLoading) {
         return null;

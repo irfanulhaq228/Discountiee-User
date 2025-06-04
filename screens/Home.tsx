@@ -12,9 +12,10 @@ import { useTheme } from '../theme/ThemeProvider';
 import SubHeaderItem from '../components/SubHeaderItem';
 import { COLORS, icons, images, SIZES } from '../constants';
 
-import { API_URL, fn_getBrandsApi, fn_getDiscountWithBrandApi } from '../api/api';
+import LocationModal from '../components/LocationModal';
 import DiscountWithBrand from '../components/DiscountWithBrand';
 import { DiscountCardSkeleton } from '../components/DiscountCard';
+import { API_URL, fn_getBrandsApi, fn_getDiscountWithBrandApi } from '../api/api';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
@@ -216,16 +217,19 @@ const Home = () => {
   }
 
   return (
-    <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {renderHeader()}
-        <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 15 }}>
-          {renderBanner()}
-          {renderBrands()}
-          {renderPopularProducts()}
-        </ScrollView>
-      </View>
-    </SafeAreaView>
+    <>
+      <LocationModal />
+      <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
+          {renderHeader()}
+          <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 15 }}>
+            {renderBanner()}
+            {renderBrands()}
+            {renderPopularProducts()}
+          </ScrollView>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 

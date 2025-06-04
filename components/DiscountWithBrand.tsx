@@ -58,19 +58,19 @@ const DiscountWithBrand: React.FC<ProductCardProps> = ({ image, brandName, brand
                     style={styles.image}
                 />
             </View>
-            <TouchableOpacity activeOpacity={0.5} style={{ marginTop: 5, flexDirection: 'row', gap: 10 }} onPress={(e) => { e.stopPropagation(); dispatch(updateSelectedBrand(brandInfo)); navigation.navigate("brand-info") }}>
-                <View style={{ width: 42, height: 42, backgroundColor: COLORS.bgPrimary, borderRadius: 42, borderWidth: 1, borderColor: COLORS.primary, overflow: "hidden" }}>
+            <TouchableOpacity activeOpacity={0.5} style={{ marginTop: 7, marginBottom: 2, flexDirection: 'row', gap: 10 }} onPress={(e) => { e.stopPropagation(); dispatch(updateSelectedBrand(brandInfo)); navigation.navigate("brand-info") }}>
+                <View style={{ width: 38, height: 38, backgroundColor: COLORS.bgPrimary, borderRadius: 38, borderWidth: 1, borderColor: COLORS.primary, overflow: "hidden", justifyContent: 'center', alignItems: 'center' }}>
                     <Image
                         source={brandImage}
                         resizeMode='contain'
-                        style={{ width: 42, height: 42, borderRadius: 42 }}
+                        style={{ width: 38, height: 38, borderRadius: 38 }}
                     />
                 </View>
                 <View style={{ justifyContent: "center", gap: 5 }}>
                     <Text style={{ fontFamily: "Urbanist Medium", fontSize: 14, color: COLORS.black }}>{brandName}</Text>
                     <View style={{ flexDirection: 'row', gap: 5 }}>
                         <FontAwesome6 name="location-dot" style={{ color: COLORS.primary }} />
-                        <Text style={{ fontFamily: "Urbanist Medium", fontSize: 12 }}>{brandCity}</Text>
+                        <Text style={{ fontFamily: "Urbanist Medium", fontSize: 12, marginTop: -1 }}>{brandCity}</Text>
                     </View>
                 </View>
             </TouchableOpacity>
