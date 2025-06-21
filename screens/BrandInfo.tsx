@@ -40,73 +40,75 @@ const BrandInfo = () => {
     };
 
     return (
-        <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
-            <View style={[styles.container, { backgroundColor: colors.background }]}>
-                <Header title="Brand Details" />
-                <ScrollView style={styles.scrollView}>
-                    <View style={{ overflow: "hidden", flexDirection: 'row', alignItems: 'center', gap: 13 }}>
-                        <Image
-                            resizeMode='contain'
-                            source={{ uri: `${API_URL}/${savedBrand?.logo}` }}
-                            style={{ width: 80, height: 80, borderRadius: 80, borderWidth: 1, borderColor: "#E0E0E0" }}
-                        />
-                        <View style={{ gap: 5 }}>
-                            <Text style={{ fontSize: 25, fontWeight: 600, color: COLORS.primary, fontFamily: "Urbanist Medium" }}>{savedBrand?.name}</Text>
-                            <View style={{ flexDirection: 'row', gap: 5 }}>
-                                <FontAwesome6 name="location-dot" style={{ color: COLORS.primary, marginTop: 1 }} size={16} />
-                                <Text style={{ fontFamily: "Urbanist Medium", padding: 0, fontSize: 15, flexShrink: 1, flexGrow: 1 }}>
-                                    {savedBrand?.address}, {savedBrand?.city}, {savedBrand?.country}
-                                </Text>
+        <>
+            <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
+                <View style={[styles.container, { backgroundColor: colors.background }]}>
+                    <Header title="Brand Details" />
+                    <ScrollView style={styles.scrollView}>
+                        <View style={{ overflow: "hidden", flexDirection: 'row', alignItems: 'center', gap: 13 }}>
+                            <Image
+                                resizeMode='contain'
+                                source={{ uri: `${API_URL}/${savedBrand?.logo}` }}
+                                style={{ width: 80, height: 80, borderRadius: 80, borderWidth: 1, borderColor: "#E0E0E0" }}
+                            />
+                            <View style={{ gap: 5 }}>
+                                <Text style={{ fontSize: 25, fontWeight: 600, color: COLORS.primary, fontFamily: "Urbanist Medium" }}>{savedBrand?.name}</Text>
+                                <View style={{ flexDirection: 'row', gap: 5 }}>
+                                    <FontAwesome6 name="location-dot" style={{ color: COLORS.primary, marginTop: 1 }} size={16} />
+                                    <Text style={{ fontFamily: "Urbanist Medium", padding: 0, fontSize: 15, flexShrink: 1, flexGrow: 1 }}>
+                                        {savedBrand?.address}, {savedBrand?.city}, {savedBrand?.country}
+                                    </Text>
+                                </View>
                             </View>
                         </View>
-                    </View>
 
-                    <View style={{ height: 1, backgroundColor: '#E0E0E0', marginVertical: 20 }} />
+                        <View style={{ height: 1, backgroundColor: '#E0E0E0', marginVertical: 20 }} />
 
-                    {selectedBrandDiscountLoader ? (
-                        <View style={{
-                            backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                            marginBottom: 60,
-                            flexDirection: 'row',
-                            flexWrap: 'wrap',
-                            gap: 16,
-                        }}>
-                            {Array.from({ length: 2 }).map((_, index) => (
-                                <DiscountCardSkeleton key={index} ShimmerPlaceholder={ShimmerPlaceholder} />
-                            ))}
-                        </View>
-                    ) : selectedBrandDiscount?.length > 0 ? (
-                        <View style={{
-                            backgroundColor: dark ? COLORS.dark1 : COLORS.white,
-                            marginBottom: 60,
-                        }}>
-                            <FlatList
-                                data={selectedBrandDiscount}
-                                keyExtractor={item => item.id}
-                                numColumns={2}
-                                columnWrapperStyle={{ gap: 16 }}
-                                showsVerticalScrollIndicator={false}
-                                renderItem={({ item }) => (
-                                    <DiscountCard image={`${API_URL}/${item?.images?.[0]}`} item={item} navigation={navigation} dispatch={dispatch} />
-                                )}
+                        {selectedBrandDiscountLoader ? (
+                            <View style={{
+                                backgroundColor: dark ? COLORS.dark1 : COLORS.white,
+                                marginBottom: 60,
+                                flexDirection: 'row',
+                                flexWrap: 'wrap',
+                                gap: 16,
+                            }}>
+                                {Array.from({ length: 2 }).map((_, index) => (
+                                    <DiscountCardSkeleton key={index} ShimmerPlaceholder={ShimmerPlaceholder} />
+                                ))}
+                            </View>
+                        ) : selectedBrandDiscount?.length > 0 ? (
+                            <View style={{
+                                backgroundColor: dark ? COLORS.dark1 : COLORS.white,
+                                marginBottom: 60,
+                            }}>
+                                <FlatList
+                                    data={selectedBrandDiscount}
+                                    keyExtractor={item => item.id}
+                                    numColumns={2}
+                                    columnWrapperStyle={{ gap: 16 }}
+                                    showsVerticalScrollIndicator={false}
+                                    renderItem={({ item }) => (
+                                        <DiscountCard image={`${API_URL}/${item?.images?.[0]}`} item={item} navigation={navigation} dispatch={dispatch} />
+                                    )}
+                                />
+                            </View>
+                        ) : (
+                            <Image
+                                source={images.PngNoDataFound}
+                                style={{
+                                    alignSelf: 'center',
+                                    width: 330,
+                                    height: 330,
+                                    maxWidth: SIZES.width * 1,
+                                    maxHeight: SIZES.width * 1,
+                                }}
+                                resizeMode="contain"
                             />
-                        </View>
-                    ) : (
-                        <Image
-                            source={images.PngNoDataFound}
-                            style={{
-                                alignSelf: 'center',
-                                width: 330,
-                                height: 330,
-                                maxWidth: SIZES.width * 1,
-                                maxHeight: SIZES.width * 1,
-                            }}
-                            resizeMode="contain"
-                        />
-                    )}
-                </ScrollView>
-            </View>
-        </SafeAreaView>
+                        )}
+                    </ScrollView>
+                </View>
+            </SafeAreaView>
+        </>
     )
 };
 

@@ -124,11 +124,9 @@ const watch12 = require("../assets/images/watches/watch12.png");
 const elipseCard = require("../assets/images/elipse-card.png");
 const rectangleCard = require("../assets/images/rectangle-card.png");
 
-const backgroundAvatar1 = require("../assets/images/background_avatar1.jpeg");
 const backgroundAvatar2 = require("../assets/images/background_avatar2.jpeg");
 const backgroundAvatar3 = require("../assets/images/DISCOUNTIEE_Splash_Screen.png");
 
-const noProfile = require("../assets/images/no-profile.jpg");
 const dLogo = require("../assets/images/Discountiee_Logo.png");
 const dTextLogo = require("../assets/images/DTextLogo.png");
 const PngNoDataFound = require('../assets/images/no-data-found.png');
@@ -263,11 +261,9 @@ export default {
     splashOnboarding3,
     splashOnboarding4,
 
-    backgroundAvatar1,
     backgroundAvatar2,
     backgroundAvatar3,
 
-    noProfile,
     dLogo,
     dTextLogo,
     PngNoDataFound

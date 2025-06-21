@@ -1,8 +1,8 @@
-import { useDispatch } from 'react-redux';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import React, { useCallback, useEffect, useState } from 'react';
 import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder';
 import { View, StyleSheet, FlatList, Image, Text, TouchableOpacity, Modal } from 'react-native';
@@ -38,14 +38,16 @@ const Brands = () => {
     const [finalCategories, setFinalCategories] = useState<any>([]);
 
     const [canFilter, setCanFilter] = useState(false);
+    const globalFilterCities = useSelector((state: any) => state.globalFilterCities);
 
     useFocusEffect(
         useCallback(() => {
+            console.log("====", firstTime);
+            setFirstTime(true);
             setBrandsLoader(true);
             fn_getBrands([]);
             fn_getCategories();
-            setFirstTime(false);
-        }, [])
+        }, [globalFilterCities])
     );
 
     useEffect(() => {
@@ -60,7 +62,7 @@ const Brands = () => {
     }, [modalVisible]);
 
     const fn_getBrands = async (params: any) => {
-        const response = await fn_getBrandsApi(params || []);
+        const response = await fn_getBrandsApi(params || [], globalFilterCities);
         if (response?.status) {
             if (firstTime) {
                 fn_getDiscounts(response?.data?.[0]?._id);
@@ -142,7 +144,7 @@ const Brands = () => {
 
     return (
         <>
-            <LocationModal />
+            <LocationModal globalFilterCities={globalFilterCities} />
             <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
                 <View style={[styles.container, { backgroundColor: colors.background }]}>
                     <View style={{ position: 'relative' }}>

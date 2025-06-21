@@ -2,9 +2,9 @@ export const API_URL = "https://ott.gpay.one/api";
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const fn_getBrandsApi = async (selectedCategories: any | null) => {
+export const fn_getBrandsApi = async (selectedCategories: any | null, globalFilterCities: any | null) => {
     try {
-        const response = await fetch(`${API_URL}/brand/get-all?status=true${selectedCategories?.length > 0 ? `&category=${selectedCategories}` : ''}`, {
+        const response = await fetch(`${API_URL}/brand/get-all?status=true${selectedCategories?.length > 0 ? `&category=${selectedCategories}` : ''}&cities=${JSON.stringify(globalFilterCities)}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -59,9 +59,9 @@ export const fn_getDiscountByBrandIdApi = async (id: string) => {
     }
 };
 
-export const fn_getDiscountWithBrandApi = async (page: any) => {
+export const fn_getDiscountWithBrandApi = async (page: any, globalFilterCities: any | null) => {
     try {
-        const response = await fetch(`${API_URL}/post/get-with-brand?status=active&page=${page}`, {
+        const response = await fetch(`${API_URL}/post/get-with-brand?status=active&page=${page}&cities=${JSON.stringify(globalFilterCities)}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -146,9 +146,9 @@ export const fn_getWithlistPostApi = async (data: any) => {
     }
 };
 
-export const fn_getPostsByCategoryApi = async (id: string) => {
+export const fn_getPostsByCategoryApi = async (id: string, globalFilterCities: any | null) => {
     try {
-        const response = await fetch(`${API_URL}/post/category?category=${id}`, {
+        const response = await fetch(`${API_URL}/post/category?category=${id}&cities=${JSON.stringify(globalFilterCities)}`, {
             method: "GET",
             headers: {
                 'Content-Type': 'application/json',
@@ -164,3 +164,21 @@ export const fn_getPostsByCategoryApi = async (id: string) => {
         return { status: false, message: error?.response?.data?.message || "Network Error" };
     }
 };
+
+export const fn_getBrandsCitiesApi = async () => {
+    try {
+        const response = await fetch(`${API_URL}/brand/get-cities`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        if (response?.status === 200) {
+            return { status: true, data: data?.cities || [] };
+        }
+    } catch (error: any) {
+        console.error("Error fetching brands cities:", error);
+        return { status: false, message: error?.response?.data?.message || "Network Error" };
+    }
+}

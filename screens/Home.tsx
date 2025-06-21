@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux';
-import React, { useCallback, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -31,6 +31,9 @@ const Home = () => {
   const [discounts, setDiscounts] = useState<any[]>([]);
   const [discountsLoader, setDiscountsLoader] = useState<boolean>(true);
 
+
+  const globalFilterCities = useSelector((state: any) => state.globalFilterCities);
+
   useFocusEffect(
     useCallback(() => {
       setBrandsLoader(true);
@@ -40,11 +43,11 @@ const Home = () => {
       setDiscountsLoader(true);
       setDiscounts([]);
       fn_getDiscounts();
-    }, [])
+    }, [globalFilterCities])
   );
 
   const fn_getBrands = async () => {
-    const response = await fn_getBrandsApi([]);
+    const response = await fn_getBrandsApi([], globalFilterCities);
     if (response?.status) {
       setBrandsLoader(false);
       setBrands(response?.data);
@@ -55,7 +58,7 @@ const Home = () => {
   };
 
   const fn_getDiscounts = async () => {
-    const response = await fn_getDiscountWithBrandApi(1);
+    const response = await fn_getDiscountWithBrandApi(1, globalFilterCities);
     if (response?.status) {
       setDiscountsLoader(false);
       setDiscounts(response?.data);
@@ -218,7 +221,7 @@ const Home = () => {
 
   return (
     <>
-      <LocationModal />
+      <LocationModal globalFilterCities={globalFilterCities} />
       <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
         <View style={[styles.container, { backgroundColor: colors.background }]}>
           {renderHeader()}

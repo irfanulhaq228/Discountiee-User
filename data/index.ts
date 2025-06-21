@@ -1,5 +1,4 @@
 import { icons, images } from "../constants";
-import { brandLogos } from "../constants/brands";
 
 export const userAddresses = [
     {
@@ -524,38 +523,6 @@ export const brands = [
         onPress: null
     },
     {
-        id: "1",
-        name: "Sapphire",
-        icon: brandLogos.sapphire,
-        iconColor: "rgba(51, 94, 247, 1)",
-        backgroundColor: "rgba(51, 94, 247, .12)",
-        onPress: "categoryclothes"
-    },
-    {
-        id: "2",
-        name: "Khaadi",
-        icon: brandLogos.khaadi,
-        iconColor: "rgba(0, 188, 211, 1)",
-        backgroundColor: "rgba(0, 188, 211,.12)",
-        onPress: "categorykitchen"
-    },
-    {
-        id: "3",
-        name: "McDonald's",
-        icon: brandLogos.mcDonald,
-        iconColor: "rgba(255, 192, 45, 1)",
-        backgroundColor: "rgba(255, 192, 45,.12)",
-        onPress: "categoryelectronics"
-    },
-    {
-        id: "4",
-        name: "KFC",
-        icon: brandLogos.kfc,
-        iconColor: "rgba(245, 67, 54, 1)",
-        backgroundColor: "rgba(245, 67, 54,.12)",
-        onPress: "categorywatch"
-    },
-    {
         id: "5",
         name: "Mc'Donald",
         icon: icons.bed,
@@ -1045,18 +1012,6 @@ export const jewelries = [
         rating: 4.5,
         quantity: 28000,
         numSolds: 632,
-        categoryId: "6",
-        navigate: "jewelrydetails"
-    },
-    {
-        id: "4",
-        name: "Sapphire Bracelet",
-        image: images.jewelry4,
-        price: "200.00",
-        numReviews: 125,
-        rating: 4.4,
-        quantity: 20000,
-        numSolds: 514,
         categoryId: "6",
         navigate: "jewelrydetails"
     },

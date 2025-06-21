@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     selectedBrand: null,
-    selectedDiscount: null
+    selectedDiscount: null,
+    globalFilterCities: []
 };
 
 export const featuresSlice = createSlice({
@@ -14,13 +15,17 @@ export const featuresSlice = createSlice({
         },
         updateSelectedDiscount: (state, action) => {
             state.selectedDiscount = action.payload;
+        },
+        updateGlobalFilterCities: (state, action) => {
+            state.globalFilterCities = action.payload;
         }
     },
 });
 
 export const {
     updateSelectedBrand,
-    updateSelectedDiscount
+    updateSelectedDiscount,
+    updateGlobalFilterCities
 } = featuresSlice.actions;
 
 export const featuresReducer = featuresSlice.reducer;

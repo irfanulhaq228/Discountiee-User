@@ -1,5 +1,5 @@
-import { useDispatch } from 'react-redux';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -33,17 +33,21 @@ const Categories = () => {
   const [firstTime, setFirstTime] = useState(true);
 
   const [selectedCategory, setSelectedCategory] = useState<any>(null);
+  const globalFilterCities = useSelector((state: any) => state.globalFilterCities);
 
   useFocusEffect(
     useCallback(() => {
       fn_getCategories();
-    }, [])
+      if (selectedCategory) {
+        fn_getPostsByCategory(selectedCategory?._id);
+      }
+    }, [globalFilterCities])
   );
 
   const fn_selectCategory = (item: any) => {
     setSelectedCategory(item);
     fn_getPostsByCategory(item?._id);
-  }
+  };
 
   const fn_getCategories = async () => {
     const response = await fn_getCategoriesApi();
@@ -63,7 +67,7 @@ const Categories = () => {
 
   const fn_getPostsByCategory = async (id: any) => {
     setDataLoader(true);
-    const response = await fn_getPostsByCategoryApi(id);
+    const response = await fn_getPostsByCategoryApi(id, globalFilterCities);
     if (response?.status) {
       setDataLoader(false);
       setData(response?.data);
@@ -75,7 +79,7 @@ const Categories = () => {
 
   return (
     <>
-      <LocationModal />
+      <LocationModal globalFilterCities={globalFilterCities} />
       <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
         <View style={[styles.container, { backgroundColor: colors.background }]}>
           <Header title="All Categories" />
