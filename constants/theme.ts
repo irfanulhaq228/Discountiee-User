@@ -9,6 +9,8 @@ export const COLORS = {
     bgPrimary: 'rgba(86, 50, 146, 0.08)',
     transparent: "transparent",
 
+    blackOpacity: 'rgba(0,0,0,0.6)',
+
     secondary: '#e7e6e6',
     tertiary: "#6C4DDA",
     success: "#0ABE75",
@@ -87,8 +89,6 @@ export const FONTS = {
     body3: { fontFamily: "Urbanist Regular", fontSize: SIZES.body3, lineHeight: 22, color: "black" },
     body4: { fontFamily: "Urbanist Regular", fontSize: SIZES.body4, lineHeight: 20, color: "black" },
 };
-
-
 
 const appTheme = { COLORS, SIZES, FONTS };
 

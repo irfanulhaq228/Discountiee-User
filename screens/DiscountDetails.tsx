@@ -153,7 +153,7 @@ const DiscountDetails = () => {
                         <Text style={{ fontSize: 25, fontWeight: 600, color: COLORS.primary, fontFamily: "Urbanist Medium" }}>{post?.brand?.name}</Text>
                         <View style={{ flexDirection: 'row', gap: 5 }}>
                             <FontAwesome6 name="location-dot" style={{ color: COLORS.primary, marginTop: 1 }} size={16} />
-                            <Text style={{ fontFamily: "Urbanist Medium", padding: 0, fontSize: 15, flexShrink: 1, flexGrow: 1 }}>
+                            <Text style={{ fontFamily: "Urbanist Medium", padding: 0, fontSize: 15, flexShrink: 1, flexGrow: 1, color: COLORS.black }}>
                                 {`${post?.brand?.address}, ${post?.brand?.city}, ${post?.brand?.country}`}
                             </Text>
                         </View>

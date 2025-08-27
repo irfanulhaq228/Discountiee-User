@@ -333,6 +333,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: COLORS.black
     },
     closeButton: {
         marginTop: 20,

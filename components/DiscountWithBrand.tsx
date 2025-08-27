@@ -70,7 +70,7 @@ const DiscountWithBrand: React.FC<ProductCardProps> = ({ image, brandName, brand
                     <Text style={{ fontFamily: "Urbanist Medium", fontSize: 14, color: COLORS.black }}>{brandName}</Text>
                     <View style={{ flexDirection: 'row', gap: 5 }}>
                         <FontAwesome6 name="location-dot" style={{ color: COLORS.primary }} />
-                        <Text style={{ fontFamily: "Urbanist Medium", fontSize: 12, marginTop: -1 }}>{brandCity}</Text>
+                        <Text style={{ fontFamily: "Urbanist Medium", fontSize: 12, marginTop: -1, color: COLORS.gray2 }}>{brandCity}</Text>
                     </View>
                 </View>
             </TouchableOpacity>

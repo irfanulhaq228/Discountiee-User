@@ -103,6 +103,7 @@ const LocationModal = ({ globalFilterCities }: any) => {
                                 <TextInput
                                     style={{ ...styles.selectInput, paddingTop: 2, paddingBottom: 3 }}
                                     placeholder="Search City"
+                                    placeholderTextColor={COLORS.gray}
                                     value={searchQuery}
                                     onChangeText={handleSearch}
                                 />
@@ -199,6 +200,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 20,
+        color: COLORS.black
     },
     closeButton: {
         marginTop: 15,

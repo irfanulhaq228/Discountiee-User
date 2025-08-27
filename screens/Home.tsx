@@ -1,11 +1,11 @@
 import { useDispatch, useSelector } from 'react-redux';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import LinearGradient from 'react-native-linear-gradient';
 import { ScrollView } from 'react-native-virtualized-view';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { createShimmerPlaceholder } from 'react-native-shimmer-placeholder'
 import { NavigationProp, useFocusEffect, useNavigation } from '@react-navigation/native';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, TextInput } from 'react-native';
 
 import Brand from '../components/Brand';
 import { useTheme } from '../theme/ThemeProvider';
@@ -15,7 +15,10 @@ import { COLORS, icons, images, SIZES } from '../constants';
 import LocationModal from '../components/LocationModal';
 import DiscountWithBrand from '../components/DiscountWithBrand';
 import { DiscountCardSkeleton } from '../components/DiscountCard';
-import { API_URL, fn_getBrandsApi, fn_getDiscountWithBrandApi } from '../api/api';
+import { API_URL, fn_getBrandsApi, fn_getDiscountWithBrandApi, fn_searchBrandsByNameApi } from '../api/api';
+
+import Feather from "react-native-vector-icons/Feather";
+import { updateSelectedBrand } from '../store/features';
 
 const ShimmerPlaceholder = createShimmerPlaceholder(LinearGradient)
 
@@ -31,6 +34,12 @@ const Home = () => {
   const [discounts, setDiscounts] = useState<any[]>([]);
   const [discountsLoader, setDiscountsLoader] = useState<boolean>(true);
 
+  const [showSearch, setShowSearch] = useState(false);
+  const [searchText, setSearchText] = useState('');
+
+  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchLoader, setSearchLoader] = useState<boolean>(false);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
   const globalFilterCities = useSelector((state: any) => state.globalFilterCities);
 
@@ -68,6 +77,25 @@ const Home = () => {
     }
   };
 
+  const fn_searchBrands = async (query: string) => {
+    if (query.trim().length === 0) {
+      setSearchResults([]);
+      setIsSearching(false);
+      return;
+    }
+
+    setSearchLoader(true);
+    setIsSearching(true);
+
+    const response = await fn_searchBrandsByNameApi(query, globalFilterCities);
+    if (response?.status) {
+      setSearchResults(response?.data || []);
+    } else {
+      setSearchResults([]);
+    }
+    setSearchLoader(false);
+  };
+
   const renderHeader = () => {
     return (
       <View style={styles.headerContainer}>
@@ -79,14 +107,6 @@ const Home = () => {
           />
         </View>
         <View style={styles.viewRight}>
-          {/* <TouchableOpacity
-            onPress={() => navigation.navigate("notifications")}>
-            <Image
-              source={icons.notificationBell2}
-              resizeMode='contain'
-              style={[styles.bellIcon, { tintColor: dark ? COLORS.white : COLORS.greyscale900 }]}
-            />
-          </TouchableOpacity> */}
           <TouchableOpacity
             onPress={() => navigation.navigate("mywishlist")}>
             <Image
@@ -100,10 +120,26 @@ const Home = () => {
     )
   };
 
+  const renderSearch = () => {
+    return (
+      <>
+        {!showSearch && (
+          <TouchableOpacity
+            onPress={() => setShowSearch(true)}
+            style={{ height: 45, width: '100%', backgroundColor: COLORS.grayscale200, borderRadius: 10, marginBottom: 10, justifyContent: 'center', paddingHorizontal: 15, position: 'relative' }}
+          >
+            <Text style={{ fontFamily: "Urbanist Regular", color: COLORS.gray }}>Search Here...</Text>
+            <Feather name='search' size={20} style={{ position: 'absolute', end: 10, top: 13, color: COLORS.primary }} />
+          </TouchableOpacity>
+        )}
+      </>
+    )
+  };
+
   const renderBanner = () => {
     return (
       <View style={[styles.bannerItemContainer, {
-        backgroundColor: dark ? COLORS.dark3 : COLORS.bgPrimary
+        backgroundColor: COLORS.bgPrimary
       }]}>
         <Image source={images.banner} style={{ width: '100%', height: '100%', objectFit: 'contain', alignSelf: 'center', overflow: 'hidden' }} />
       </View>
@@ -219,13 +255,179 @@ const Home = () => {
     )
   }
 
+  const renderSearchResults = () => {
+    if (!isSearching) return null;
+
+    return (
+      <View style={{
+        position: 'absolute',
+        top: 145, // Position below search input
+        left: 16,
+        right: 16,
+        zIndex: 1000,
+        backgroundColor: COLORS.white,
+        borderRadius: 10,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        maxHeight: 300,
+      }}>
+        {searchLoader ? (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ fontFamily: "Urbanist Regular", color: COLORS.gray }}>Searching...</Text>
+          </View>
+        ) : searchResults.length > 0 ? (
+          <FlatList
+            data={searchResults}
+            keyExtractor={(item) => item._id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+              <TouchableOpacity
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  paddingVertical: 15,
+                  marginHorizontal: 15,
+                  borderBottomWidth: 1,
+                  borderBottomColor: COLORS.grayscale200,
+                }}
+                onPress={() => {
+                  setSearchText('');
+                  setShowSearch(false);
+                  setIsSearching(false);
+                  navigation.navigate("brand-info");
+                  dispatch(updateSelectedBrand(item));
+                }}
+              >
+                <Image
+                  source={{ uri: `${API_URL}/${item?.logo}` }}
+                  style={{
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    marginRight: 12,
+                  }}
+                  resizeMode="contain"
+                />
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 16,
+                    fontFamily: "Urbanist SemiBold",
+                    color: COLORS.greyscale900,
+                  }}>
+                    {item?.name}
+                  </Text>
+                  {item?.city && (
+                    <Text style={{
+                      fontSize: 14,
+                      fontFamily: "Urbanist Regular",
+                      color: COLORS.greyscale600,
+                      marginTop: 2,
+                    }}>
+                      {item?.city}
+                    </Text>
+                  )}
+                </View>
+                <Feather name="chevron-right" size={20} color={COLORS.greyscale600} />
+              </TouchableOpacity>
+            )}
+          />
+        ) : searchText.trim().length > 0 ? (
+          <View style={{ padding: 20, alignItems: 'center' }}>
+            <Text style={{ fontFamily: "Urbanist Regular", color: COLORS.greyscale600 }}>
+              No brands found for "{searchText}"
+            </Text>
+          </View>
+        ) : null}
+      </View>
+    );
+  };
+
   return (
     <>
+      {showSearch && (
+        <TouchableOpacity
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            zIndex: 999,
+            backgroundColor: COLORS.blackOpacity,
+            width: "100%",
+            height: "100%"
+          }}
+          onPress={() => {
+            setShowSearch(false);
+            setSearchText('');
+          }}
+          activeOpacity={1}
+        />
+      )}
+
+      {/* Search Input Overlay */}
+      {showSearch && (
+        <View style={{
+          position: 'absolute',
+          top: 100, // Adjust this value based on your header height
+          left: 16,
+          right: 16,
+          zIndex: 1000,
+        }}>
+          <View style={{
+            backgroundColor: COLORS.white,
+            borderRadius: 10,
+            elevation: 5,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+          }}>
+            <TextInput
+              style={{
+                height: 45,
+                width: '100%',
+                paddingHorizontal: 15,
+                paddingRight: 50,
+                fontSize: 13,
+                borderRadius: 10,
+                fontFamily: 'Urbanist Regular',
+                fontWeight: 500,
+                color: COLORS.black
+              }}
+              placeholder='Search Here...'
+              placeholderTextColor={COLORS.gray}
+              value={searchText}
+              onChangeText={(text) => {
+                setSearchText(text);
+                fn_searchBrands(text);
+              }}
+              autoFocus={true}
+            />
+            <View style={{ position: 'absolute', right: 10, top: 12, flexDirection: 'row', alignItems: 'center' }}>
+              <Feather name="search" size={20} style={{ marginRight: 8 }} />
+              <TouchableOpacity onPress={() => {
+                setShowSearch(false);
+                setSearchText('');
+                setIsSearching(false);
+              }}>
+                <Feather name="x" size={20} />
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Search Results Overlay */}
+      {renderSearchResults()}
+
       <LocationModal globalFilterCities={globalFilterCities} />
       <SafeAreaView style={[styles.area, { backgroundColor: colors.background }]}>
         <View style={[styles.container, { backgroundColor: colors.background }]}>
           {renderHeader()}
           <ScrollView showsVerticalScrollIndicator={false} style={{ paddingTop: 15 }}>
+            {renderSearch()}
             {renderBanner()}
             {renderBrands()}
             {renderPopularProducts()}

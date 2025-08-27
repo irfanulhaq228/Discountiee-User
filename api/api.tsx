@@ -182,3 +182,21 @@ export const fn_getBrandsCitiesApi = async () => {
         return { status: false, message: error?.response?.data?.message || "Network Error" };
     }
 }
+
+export const fn_searchBrandsByNameApi = async (searchQuery: string, globalFilterCities: any | null) => {
+    try {
+        const response = await fetch(`${API_URL}/brand/get-all?status=true&name=${encodeURIComponent(searchQuery)}&cities=${JSON.stringify(globalFilterCities)}`, {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        const data = await response.json();
+        if (response?.status === 200) {
+            return { status: true, data: data.data };
+        }
+    } catch (error: any) {
+        console.error("Error searching brands:", error);
+        return { status: false, message: error?.response?.data?.message || "Network Error" };
+    }
+};
